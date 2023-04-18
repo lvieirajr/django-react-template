@@ -1,0 +1,83 @@
+version: "3.8"
+
+
+x-service-defaults: &service-defaults
+  build:
+    context: ./backend/
+    dockerfile: Dockerfile
+  image: {{LOWER_APP_NAME}}/{{LOWER_APP_NAME}}:latest
+  restart: unless-stopped
+  stdin_open: true
+  tty: true
+  volumes:
+    - ./backend/:/app/:rw,cached
+
+
+services:
+  api:
+    <<: *service-defaults
+    container_name: api
+    command: ./sh/api-dev.sh
+    ports:
+      - "8000:8000"
+    depends_on:
+      - worker
+      - postgres
+      - redis
+
+  worker:
+    <<: *service-defaults
+    container_name: worker
+    command: ./sh/worker-dev.sh
+    depends_on:
+      - worker-scheduler
+      - postgres
+      - redis
+
+  worker-scheduler:
+    <<: *service-defaults
+    container_name: worker-scheduler
+    command: ./sh/worker-scheduler-dev.sh
+    depends_on:
+      - redis
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data/:rw,cached
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    volumes:
+      - redis-volume:/tmp/redis/:rw,cached
+    ports:
+      - "6379:6379"
+
+  localstack:
+    image: localstack/localstack:1.4
+    container_name: localstack
+    restart: unless-stopped
+    environment:
+      - SERVICES=s3
+      - DATA_DIR=/tmp/localstack/data/
+    ports:
+      - "4566:4566"
+    volumes:
+      - localstack-volume:/tmp/localstack/:rw,cached
+      - ./backend/sh/create-bucket.sh:/etc/localstack/init/ready.d/create-bucket.sh
+
+
+volumes:
+  postgres-volume:
+  redis-volume:
+  localstack-volume:

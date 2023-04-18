@@ -1,0 +1,96 @@
+# ======
+# Poetry
+# ======
+[tool.poetry]
+name = "backend"
+version = "1.0.0"
+authors = ["Luis Vieira <lvieira@lvieira.com>"]
+description = "backend"
+
+[tool.poetry.dependencies]
+python = "~3.11.0"
+boto3 = {version = "^1.26.114"}
+celery = {version = "^5.2.7"}
+django = {version = "^4.2.0"}
+djangorestframework = {version = "^3.14.0"}
+django-cors-headers = {version = "^3.14.0"}
+django-environ = {version = "^0.10.0"}
+django-extensions = {version = "^3.2.1"}
+django-ipware = {version = "^5.0.0"}
+django-redis = {version = "^5.2.0", extras=["hiredis"]}
+ipython = {version = "^8.12.0"}
+loguru = {version = "^0.7.0"}
+psycopg2 = {version = "^2.9.6"}
+redis = {version = "^4.5.4", extras=["hiredis"]}
+uwsgi = {version = "2.0.21"}
+
+[tool.poetry.dev-dependencies]
+black = {version = "^23.3.0"}
+boto3-stubs = {version = "^1.26.114", extras=["s3"]}
+django-stubs = {version = "^1.16.0", extras=["compatible-mypy"]}
+djangorestframework-stubs = {version = "^1.10.0", extras=["compatible-mypy"]}
+factory-boy = {version = "^3.2.1"}
+ipdb = {version = "^0.13.13"}
+mock = {version = "^5.0.1"}
+mypy = {version = "^1.1.1"}
+pytest = {version = "^7.3.1"}
+pytest-cov = {version = "^4.0.0"}
+pytest-django = {version = "^4.5.2"}
+pytest-mock = {version = "^3.10.0"}
+ruff = {version = "^0.0.261"}
+safety = {version = "^2.3.5"}
+watchdog = {version = "^3.0.0"}
+
+[build-system]
+requires = ["poetry-core>=1.5.2"]
+build-backend = "poetry.core.masonry.api"
+
+
+# ======
+# PyTest
+# ======
+[tool.pytest.ini_options]
+addopts = "-s -vv"
+mock_use_standalone_module = true
+
+
+# =====
+# Black
+# =====
+[tool.black]
+include = '\.py$'
+line-length = 88
+target-version = ["py310", "py311"]
+
+
+# ====
+# MyPy
+# ====
+[tool.mypy]
+ignore_missing_imports = true
+namespace_packages = true
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+strict = true
+
+[tool.django-stubs]
+django_settings_module = "app.settings"
+
+
+# ====
+# Ruff
+# ====
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+select = ["B", "C4", "C90", "COM", "E", "EXE", "F", "I", "ISC", "N", "S", "T10", "T20", "W"]
+ignore = []
+exclude = [".git/", ".github/", ".mypy_cache/", ".pytest_cache/", ".ruff_cache/", "__pycache__/"]
+
+[tool.ruff.isort]
+known-third-party = []
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.ruff.per-file-ignores]
+"tests/*.py" = []

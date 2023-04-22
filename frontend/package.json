@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "Frontend",
   "version": "1.0.0",
   "author": "Luis Vieira <lvieira@lvieira.com>",
   "scripts": {
@@ -23,8 +23,10 @@
     "axios": "^1.3.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet-async": "^1.3.0",
     "react-hook-form": "^7.43.9",
     "react-router-dom": "^6.10.0",
+    "tailwindcss": "^3.3.1",
     "zod": "^3.21.4"
   },
   "devDependencies": {

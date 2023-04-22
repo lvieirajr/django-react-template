@@ -11,8 +11,11 @@ ENV PYTHONPATH /app/
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Arguments
+ARG INSTALL_DEV_DEPENDENCIES=false
+
 # Create a new user to avoid using root
-RUN addgroup --system {{LOWER_APP_NAME}} && adduser --system --ingroup {{LOWER_APP_NAME}} {{LOWER_APP_NAME}} && chown {{LOWER_APP_NAME}}:{{LOWER_APP_NAME}} ./
+RUN addgroup --system app && adduser --system --ingroup app app && chown app:app ./
 
 # Install general dependencies
 RUN apt-get update \
@@ -29,34 +32,13 @@ RUN apt-get update \
     && poetry config virtualenvs.create false
 
 # Copy configuration files
-COPY --chown={{LOWER_APP_NAME}}:{{LOWER_APP_NAME}} ./pyproject.toml ./poetry.lock* /app/
+COPY --chown=app:app ./pyproject.toml ./poetry.lock* /app/
 
-
-# ======================================================================================
-# Release Image
-# ======================================================================================
-FROM base as release
-
-# Install only core dependencies
-RUN poetry install --no-root --without dev
+# Install python dependencies
+RUN if [ "$INSTALL_DEV_DEPENDENCIES" = true ] ; then poetry install --no-root ; else poetry install --no-root --without dev ; fi
 
 # Copy the app
-COPY --chown={{LOWER_APP_NAME}}:{{LOWER_APP_NAME}} ./ /app/
+COPY --chown=app:app ./ /app/
 
 # Set the default user
-USER {{LOWER_APP_NAME}}
-
-
-# ======================================================================================
-# Development Image
-# ======================================================================================
-FROM base as development
-
-# Install all dependencies
-RUN poetry install --no-root
-
-# Copy the app
-COPY --chown={{LOWER_APP_NAME}}:{{LOWER_APP_NAME}} ./ /app/
-
-# Set the default user
-USER {{LOWER_APP_NAME}}
+USER app

@@ -3,6 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import Container from '@mui/material/Container';
 
 import useAuthentication from '../contexts/authentication';
+import SEOHelmet from '../components/SEOHelmet';
 
 const UnauthenticatedLayout: React.FC = () => {
   const { user } = useAuthentication();
@@ -12,9 +13,13 @@ const UnauthenticatedLayout: React.FC = () => {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Outlet />
-    </Container>
+    <>
+      <SEOHelmet />
+
+      <Container component="main" maxWidth="xs">
+        <Outlet />
+      </Container>
+    </>
   );
 };
 

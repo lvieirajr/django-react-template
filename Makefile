@@ -56,7 +56,6 @@ mypy:
 
 .PHONY: setup-backend
 setup-backend:
-	@$(MAKE) poetry-lock
 	@$(MAKE) build-backend
 	@$(MAKE) reset-database
 	@$(MAKE) create-migrations
@@ -115,7 +114,6 @@ lint-frontend:
 setup:
 	@$(MAKE) setup-backend
 	@$(MAKE) setup-frontend
-
 
 .PHONY: help
 help:

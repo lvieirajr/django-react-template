@@ -5,7 +5,9 @@ x-service-defaults: &service-defaults
   build:
     context: ./backend/
     dockerfile: Dockerfile
-  image: {{LOWER_APP_NAME}}/{{LOWER_APP_NAME}}:latest
+    args:
+      INSTALL_DEV_DEPENDENCIES: "true"
+  image: backend
   restart: unless-stopped
   stdin_open: true
   tty: true

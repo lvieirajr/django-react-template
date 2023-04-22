@@ -1,0 +1,28 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.bak
+*.log
+*.swp
+*.tmp
+
+# Git
+.git
+.gitattributes
+.gitignore
+
+# Docker
+Dockerfile
+
+# Docs
+README.md
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+
+# Environment
+.env

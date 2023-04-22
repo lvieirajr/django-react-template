@@ -4,6 +4,7 @@ import Container from '@mui/material/Container';
 
 import NavBar from '../components/NavBar';
 import useAuthentication from '../contexts/authentication';
+import SEOHelmet from '../components/SEOHelmet';
 
 const AuthenticatedLayout: React.FC = () => {
   const { user } = useAuthentication();
@@ -13,10 +14,14 @@ const AuthenticatedLayout: React.FC = () => {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <NavBar />
-      <Outlet />
-    </Container>
+    <>
+      <SEOHelmet />
+
+      <Container component="main" maxWidth="xs">
+        <NavBar />
+        <Outlet />
+      </Container>
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
-# {{TITLE_APP_NAME}}
+# -
 
 ## Setup
-You can setup {{TITLE_APP_NAME}} with just one command.
+You can setup the application with just one command.
 
 ```shell
 make setup

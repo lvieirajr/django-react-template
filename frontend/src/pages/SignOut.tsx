@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import useAuthentication from '../contexts/authentication';
+import { useAuthentication } from '../contexts/authentication';
 
 const SignOutPage: React.FC = () => {
   const { signOut } = useAuthentication();

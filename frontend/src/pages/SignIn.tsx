@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import { AxiosError, AxiosResponse } from 'axios';
 import { z } from 'zod';
 
-import useAuthentication from '../contexts/authentication';
+import { useAuthentication } from '../contexts/authentication';
 
 export interface SignInForm {
   email: string;

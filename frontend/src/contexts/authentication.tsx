@@ -53,6 +53,6 @@ export const AuthenticationProvider = ({ children }: { children: React.ReactNode
   );
 };
 
-export default function useAuthentication() {
+export const useAuthentication = () => {
   return useContext(AuthenticationContext);
-}
+};

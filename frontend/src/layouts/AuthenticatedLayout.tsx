@@ -3,8 +3,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 import Container from '@mui/material/Container';
 
 import NavBar from '../components/NavBar';
-import useAuthentication from '../contexts/authentication';
 import SEOHelmet from '../components/SEOHelmet';
+import { useAuthentication } from '../contexts/authentication';
 
 const AuthenticatedLayout: React.FC = () => {
   const { user } = useAuthentication();

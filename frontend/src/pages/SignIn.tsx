@@ -46,7 +46,7 @@ const SignInPage: React.FC = () => {
 
   return (
     <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <Typography component="h1" variant="h5">
+      <Typography component="h1">
         <img src="/logo.svg" alt="logo" height={100} width={200} />
       </Typography>
 

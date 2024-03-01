@@ -1,107 +1,177 @@
+# Paths
 backend_path=./backend/
 frontend_path=./frontend/
-service=api
+
+# Backend services
+api_service=api
+worker_service=worker
+
+# Frontend services
+frontend_service=frontend
+
+
+# ======================================================================================
+# Docker
+# ======================================================================================
+.PHONY: docker-compose-run
+docker-compose-run: ##@Docker Runs a command on Docker Compose
+	@docker compose run --remove-orphans --rm --use-aliases $(options) $(service) $(cmd)
+
+.PHONY: build
+build: ##@Docker Builds a Docker Compose service
+	@docker compose build $(options) $(service)
+
+.PHONY: start
+start: ##@Docker Starts a Docker Compose service
+	@docker compose up --abort-on-container-exit --attach-dependencies --remove-orphans $(options) $(service)
+
+.PHONY: stop
+stop: ##@Docker Stops a Docker Compose service
+	@docker compose down --remove-orphans --timeout 1 $(options) $(service)
+
+.PHONY: debug
+debug: ##@Docker Debugs a Docker Compose service
+	@$(MAKE) docker-compose-run options="--service-ports" $(service)
+
+.PHONY: shell
+shell: ##@Docker Shells into a Docker Compose service
+	@$(MAKE) docker-compose-run $(service) cmd="bash"
 
 
 # ======================================================================================
 # Backend
 # ======================================================================================
 .PHONY: build-backend
-build-backend:
-	@docker-compose build --force-rm --no-cache $(service)
+build-backend: ##@Backend Builds the backend docker image
+	@$(MAKE) build service="$(api_service) $(worker_service)"
 
-.PHONY: run-backend
-run-backend:
-	@docker-compose up
+.PHONY: start-backend
+start-backend: ##@Backend Starts the backend
+	@$(MAKE) start service="$(api_service)"
 
-.PHONY: debug-backend
-debug-backend:
-	@docker-compose run --rm --service-ports --use-aliases --name=$(service) $(service)
+.PHONY: stop-backend
+stop-backend: ##@Backend Stops the backend
+	@$(MAKE) stop service="$(api_service)"
 
-.PHONY: create-migrations
-create-migrations:
-	@docker-compose run --rm --name=create-migrations $(service) python manage.py makemigrations
+.PHONY: debug-api
+debug-api: ##@Backend Runs the API in debug mode
+	@$(MAKE) debug service="$(api_service)"
 
-.PHONY: apply-migrations
-apply-migrations:
-	@docker-compose run --rm --name=apply-migrations $(service) python manage.py migrate
+.PHONY: debug-worker
+debug-worker: ##@Backend Runs the Worker in debug mode
+	@$(MAKE) debug service="$(worker_service)"
 
-.PHONY: reset-database
-reset-database:
-	@docker-compose run --rm --name=reset-database $(service) python manage.py reset_db -c --noinput
+.PHONY: shell-backend
+shell-backend: ##@Backend Shells into the backend container
+	@$(MAKE) shell service="$(api_service)"
 
-.PHONY: shell
-shell:
-	@docker-compose run --rm --name=shell $(service) sh
-
-.PHONY: python-shell
-python-shell:
-	@docker-compose run --rm --name=python-shell $(service) python manage.py shell_plus
+.PHONY: ipython
+ipython: ##@Backend Starts an IPython shell
+	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py shell_plus"
 
 .PHONY: poetry-lock
-poetry-lock:
-	@docker-compose run --rm --no-deps --name=upgrade-backend-dependencies $(service) poetry lock
+poetry-lock: ##@Backend Creates lock file with updated python dependencies
+	@$(MAKE) docker-compose-run options="--no-deps $(options)" service="$(api_service)" cmd="poetry lock"
+
+.PHONY: show-urls
+show-urls: ##@Backend Shows the URLs available on the API
+	@$(MAKE) docker-compose-run options="--no-deps $(options)" service="$(api_service)" cmd="python manage.py show_urls"
+
+.PHONY: clear-cache
+clear-cache: ##@Backend Clears the cache
+	@$(MAKE) docker-compose-run options="--no-deps $(options)" service="$(api_service)" cmd="python manage.py clear_cache"
+
+.PHONY: reset-database
+reset-database: ##@Backend Resets database to an empty state
+	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py reset_db -c --noinput"
+
+.PHONY: create-migrations
+create-migrations: ##@Backend Creates DB migrations
+	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py makemigrations"
+
+.PHONY: apply-migrations
+apply-migrations: ##@Backend Applies migrations to the database
+	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py migrate"
+
+.PHONY: seed-database
+seed-database: ##@Backend Seeds data into the database
+	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py seed_db"
+
+.PHONY: manage
+manage: ##@Backend Runs a Django manage command
+	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py $(cmd)"
 
 .PHONY: ruff
-ruff:
-	@docker-compose run --rm --no-deps --name=ruff $(service) ruff check --fix --no-cache --show-source --show-fixes ./
-
-.PHONY: black
-black:
-	@docker-compose run --rm --no-deps --name=black $(service) black ./
+ruff: ##@Backend Runs Ruff linter with automatic fixes
+	@$(MAKE) docker-compose-run options="--no-deps" service="$(api_service)" cmd="ruff format ./ --no-cache --respect-gitignore"
+	@$(MAKE) docker-compose-run options="--no-deps" service="$(api_service)" cmd="ruff check ./ --no-cache --respect-gitignore --fix"
 
 .PHONY: mypy
-mypy:
-	@docker-compose run --rm --no-deps --name=mypy $(service) mypy -p app
+mypy: ##@Backend Runs MyPy static type checker
+	@$(MAKE) docker-compose-run options="--no-deps" service="$(api_service)" cmd="mypy -p app --pretty --install-types --non-interactive"
+
+.PHONY: setup-database
+setup-database: ##@Backend Resets database, runs migrations and add test data
+	@$(MAKE) reset-database
+	@$(MAKE) apply-migrations
+	@$(MAKE) seed-database
 
 .PHONY: setup-backend
-setup-backend:
+setup-backend: ##@Backend Sets up the entire backend from scratch
 	@$(MAKE) build-backend
-	@$(MAKE) reset-database
-	@$(MAKE) create-migrations
-	@$(MAKE) apply-migrations
+	@$(MAKE) setup-database
 
 .PHONY: lint-backend
-lint-backend:
+lint-backend: ##@Backend Runs linters and type checking: Ruff, MyPy
 	@$(MAKE) ruff
-	@$(MAKE) black
 	@$(MAKE) mypy
 
 
 # ======================================================================================
 # Frontend
 # ======================================================================================
-.PHONY: install-frontend
-install-frontend:
-	@pnpm --dir $(frontend_path) install
-
 .PHONY: build-frontend
-build-frontend:
-	@pnpm --dir $(frontend_path) build
+build-frontend: ##@Frontend Builds the frontend docker image
+	@$(MAKE) build service="$(frontend_service)"
 
-.PHONY: run-frontend
-run-frontend:
-	@pnpm --dir $(frontend_path) run dev
+.PHONY: start-frontend
+start-frontend: ##@Frontend Starts the frontend
+	@$(MAKE) start service="$(frontend_service)"
+
+.PHONY: stop-frontend
+stop-frontend: ##@Frontend Stops the frontend
+	@$(MAKE) stop service="$(frontend_service)"
+
+.PHONY: debug-frontend
+debug-frontend: ##@Frontend Runs the Frontend in debug mode
+	@$(MAKE) debug service="$(frontend_service)"
+
+.PHONY: shell-frontend
+shell-frontend: ##@Frontend Shells into the frontend container
+	@$(MAKE) shell service="$(frontend_service)"
+
+.PHONY: node
+node: ##@Frontend Starts a Node shell
+	@$(MAKE) docker-compose-run service="$(frontend_service)" cmd="node"
 
 .PHONY: tsc
-tsc:
-	@pnpm --dir $(frontend_path) run tsc
+tsc: ##@Frontend Runs Typescript
+	@$(MAKE) docker-compose-run options="--no-deps" service="$(frontend_service)" cmd="pnpm run tsc"
 
 .PHONY: eslint
-eslint:
-	@pnpm --dir $(frontend_path) run eslint
+eslint: ##@Frontend Runs ESLint
+	@$(MAKE) docker-compose-run options="--no-deps" service="$(frontend_service)" cmd="pnpm run eslint"
 
 .PHONY: prettier
-prettier:
-	@pnpm --dir $(frontend_path) run prettier
+prettier: ##@Frontend Runs Prettier
+	@$(MAKE) docker-compose-run options="--no-deps" service="$(frontend_service)" cmd="pnpm run prettier"
 
 .PHONY: setup-frontend
-setup-frontend:
-	@$(MAKE) install-frontend
+setup-frontend: ##@Frontend Sets up the entire frontend from scratch
 	@$(MAKE) build-frontend
 
 .PHONY: lint-frontend
-lint-frontend:
+lint-frontend: ##@Frontend Runs all the linters/checks: Typescript, ESLint, and Prettier
 	@$(MAKE) tsc
 	@$(MAKE) eslint
 	@$(MAKE) prettier
@@ -111,38 +181,19 @@ lint-frontend:
 # Misc
 # ======================================================================================
 .PHONY: setup
-setup:
+setup:  ##@Misc Sets up the entire application
+	@cp -n $(backend_path).env.sample $(backend_path).env || true
+	@cp -n $(frontend_path).env.sample $(frontend_path).env || true
 	@$(MAKE) setup-backend
 	@$(MAKE) setup-frontend
 
+HELP_FUN = \
+    %help; while(<>){push@{$$help{$$2//'options'}},[$$1,$$3] \
+    if/^([\w-_]+)\s*:.*\#\#(?:@(\w+))?\s(.*)$$/}; \
+    print"$$_:\n", map"  $$_->[0]".(" "x(20-length($$_->[0])))."$$_->[1]\n",\
+    @{$$help{$$_}},"\n" for sort keys %help; \
+
 .PHONY: help
-help:
-	@echo "Misc:"
-	@echo " help                            Displays this help message"
-	@echo " setup                           Sets up the entire application"
-
-	@echo "\Backend:"
-	@echo " build-backend                   Builds the backend"
-	@echo " run-backend                     Runs the backend"
-	@echo " debug-backend                   Runs the backend attached to the service to allow for debugging"
-	@echo " create-migrations               Creates new migrations from model changes"
-	@echo " apply-migrations                Applies migrations to the database"
-	@echo " reset-database                  Resets database to an empty state"
-	@echo " shell                           Starts a shell inside the container"
-	@echo " python-shell                    Starts a python shell inside the container"
-	@echo " poetry-lock                     Locks the python dependencies into the poetry.lock file"
-	@echo " ruff                            Runs the ruff linter with automatic fixes"
-	@echo " black                           Runs black linter with automatic fixes"
-	@echo " mypy                            Runs static type checker"
-	@echo " setup-backend                   Sets up the entire backend from scratch"
-	@echo " lint-backend                    Runs all the linters/checks: Ruff, Black, and MyPy"
-
-	@echo "\Frontend:"
-	@echo " install-frontend                Installs frontend dependencies re-generating the lockfile"
-	@echo " build-frontend                  Builds the frontend"
-	@echo " run-frontend                    Runs the frontend"
-	@echo " tsc                             Runs typescript against the codebase"
-	@echo " eslint                          Runs eslint on the codebase"
-	@echo " prettier                        Runs prettier on the codebase"
-	@echo " setup-backend                   Sets up the entire frontend from scratch"
-	@echo " lint-backend                    Runs all the linters/checks: Typescript, ESLint, and Prettier"
+help: ##@Misc Show this help
+	@echo "Usage: make [target] ...\n"
+	@perl -e '$(HELP_FUN)' $(MAKEFILE_LIST)

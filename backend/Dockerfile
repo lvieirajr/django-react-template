@@ -1,44 +1,47 @@
 # ======================================================================================
 # Base Image
 # ======================================================================================
-FROM python:3.11-slim as base
+FROM python:3.12-slim as base
 
 # Environment
+ARG ENVIRONMENT=production
+
 WORKDIR /app/
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV PYTHONPATH /app/
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV DEBIAN_FRONTEND="noninteractive"
+ENV POETRY_CONFIG_DIR="/home/app/.config/pypoetry/"
+ENV PYTHONPATH="/app/"
+ENV PYTHONUNBUFFERED=1
 
-# Arguments
-ARG INSTALL_DEV_DEPENDENCIES=false
-
-# Create a new user to avoid using root
-RUN addgroup --system app && adduser --system --ingroup app app && chown app:app ./
-
-# Install general dependencies
+# OS dependencies & configuration
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
     build-essential \
+    ca-certificates \
     libpcre3-dev \
     libpq-dev \
+    openssl \
     && apt-get upgrade --no-install-recommends -y \
     && apt-get purge --auto-remove -y -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false \
     && apt-get autoremove -y \
     && apt-get clean autoclean \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/ \
-    && pip install --upgrade --no-cache-dir pip setuptools poetry \
-    && poetry config virtualenvs.create false
+    && pip install --no-cache-dir --upgrade pip poetry \
+    && poetry config virtualenvs.create false \
+    && adduser --system --group --home /home/app/ app \
+    && mkdir /home/app/.celery/ /home/app/.uwsgi/ \
+    && chown -R app:app /usr/local/ /home/app/ /app/
 
-# Copy configuration files
+# User
+USER app
+
+# Application configuration files
 COPY --chown=app:app ./pyproject.toml ./poetry.lock* /app/
 
-# Install python dependencies
-RUN if [ "$INSTALL_DEV_DEPENDENCIES" = true ] ; then poetry install --no-root ; else poetry install --no-root --without dev ; fi
+# Python dependencies
+RUN if [ "$ENVIRONMENT" = "dev" ] || [ "$ENVIRONMENT" = "test" ]  || [ "$ENVIRONMENT" = "ci" ] ; \
+    then poetry install --no-ansi --no-cache --no-interaction --no-root --only main,dev ; \
+    else poetry install --no-ansi --no-cache --no-interaction --no-root --only main ; fi
 
-# Copy the app
+# Application code
 COPY --chown=app:app ./ /app/
-
-# Set the default user
-USER app

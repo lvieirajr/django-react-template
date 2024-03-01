@@ -1,12 +1,67 @@
-# OS
+### START Mac OS ###
+*.icloud
+._*
+.AppleDB
+.AppleDesktop
+.AppleDouble
+.DocumentRevisions-V100
 .DS_Store
-Thumbs.db
+.LSOverride
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.apdisk
+.com.apple.timemachine.donotpresent
+.fseventsd
+Network Trash Folder
+Temporary Items
+### END Mac OS ###
 
-# Misc
+
+### START Linux ###
+*~
+.directory
+.fuse_hidden*
+.nfs*
+.Trash-*
+### END Linux ###
+
+
+### START Windows ###
+*.cab
+*.lnk
+*.msi
+*.msix
+*.msm
+*.msp
+*.stackdump
+$RECYCLE.BIN/
+[Dd]esktop.ini
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+### END Windows ###
+
+
+### START Others ###
+# Backups / Logs / Temporary files
 *.bak
 *.log
 *.swp
 *.tmp
+
+# IDEs
+.idea/
+*.project
+*.tmproj
+*.vscode
+.devcontainer
+
+# Environment
+.env
+.env.sample
 
 # Git
 .git
@@ -15,6 +70,7 @@ Thumbs.db
 
 # Docker
 Dockerfile
+.dockerignore
 
 # Docs
 README.md
@@ -24,5 +80,21 @@ __pycache__
 *.py[cod]
 *$py.class
 
-# Environment
-.env
+# Mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# PyTest
+.pytest_cache/
+
+# Ruff
+.ruff_cache/
+
+# Coverage
+.coverage*
+
+# Celery Beat
+celerybeat-schedule
+celerybeat.pid
+### END Others ###

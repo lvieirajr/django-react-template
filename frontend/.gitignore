@@ -3,3 +3,9 @@ node_modules/
 
 # Build
 dist/
+
+# PNPM
+pnpm-debug.log*
+
+# ESLint
+.eslintcache/

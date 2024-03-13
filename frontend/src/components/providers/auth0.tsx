@@ -12,6 +12,8 @@ export function Auth0Provider({ children }: PropsWithChildren): JSX.Element {
       domain={AUTH0_DOMAIN}
       clientId={AUTH0_CLIENT_ID}
       authorizationParams={{ redirect_uri: window.location.origin }}
+      useRefreshTokens={true}
+      cacheLocation="localstorage"
       onRedirectCallback={(appState?: AppState) =>
         navigate(appState?.returnTo || window.location.pathname)
       }

@@ -13,8 +13,8 @@ x-backend-defaults: &backend-defaults
     context: ./backend/
     dockerfile: Dockerfile
     args:
-      ENVIRONMENT: "dev"
-  image: djangoreacttemplate/backend:latest
+      ENVIRONMENT: "development"
+  image: django_react_template/backend:latest
   env_file:
     - ./backend/.env
   volumes:
@@ -26,56 +26,85 @@ x-frontend-defaults: &frontend-defaults
     context: ./frontend/
     dockerfile: Dockerfile
     args:
-      ENVIRONMENT: "dev"
-  image: djangoreacttemplate/frontend:latest
+      ENVIRONMENT: "development"
+  image: django_react_template/frontend:latest
   env_file:
     - ./frontend/.env
   volumes:
     - ./frontend/:/app/:rw,cached
-    - node_modules:/app/node_modules/:rw,cached
     - dist:/app/dist/:rw,cached
+    - node_modules:/app/node_modules/:rw,cached
 
 
 # Services
 services:
-  api:
+  django:
     <<: *backend-defaults
-    container_name: api
-    command: ./bin/api-dev.sh
+    container_name: django
+    command: ./bin/django-dev.sh
     ports:
       - "8000:8000"
     depends_on:
-      - worker
-      - postgres
-      - redis
+      celery:
+        condition: service_started
+      openfga:
+        condition: service_started
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
 
-  worker:
+  celery:
     <<: *backend-defaults
-    container_name: worker
-    command: ./bin/worker-dev.sh
+    container_name: celery
+    command: ./bin/celery-dev.sh
     depends_on:
-      - worker-scheduler
-      - postgres
-      - redis
+      celerybeat:
+        condition: service_started
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
 
-  worker-scheduler:
+  celerybeat:
     <<: *backend-defaults
-    container_name: worker-scheduler
-    command: ./bin/worker-scheduler-dev.sh
+    container_name: celerybeat
+    command: ./bin/celerybeat-dev.sh
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+
+  openfga:
+    image: openfga/openfga:latest
+    container_name: openfga
+    restart: unless-stopped
+    command: run
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=postgres
+      - OPENFGA_DATASTORE_URI=postgres://postgres:postgres@postgres:5432/postgres
+      - OPENFGA_LOG_FORMAT=json
+    ports:
+      - "8080:8080"
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_started
 
   frontend:
     <<: *frontend-defaults
     container_name: frontend
     command: ./bin/dev.sh
     ports:
-      - "3000:3000"
+      - "8001:8001"
 
   postgres:
     image: postgres:16-alpine
     container_name: postgres
     restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     volumes:
       - postgres:/var/lib/postgresql/data/:rw,cached
     ports:
@@ -90,10 +119,9 @@ services:
     ports:
       - "6379:6379"
 
-
 # Volumes
 volumes:
-  node_modules:
   dist:
+  node_modules:
   postgres:
   redis:

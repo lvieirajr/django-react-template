@@ -20,3 +20,6 @@ dmypy.json
 # Celery Beat
 celerybeat-schedule
 celerybeat.pid
+
+# Built static files
+staticfiles/

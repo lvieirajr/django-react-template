@@ -2,13 +2,6 @@
 backend_path=./backend/
 frontend_path=./frontend/
 
-# Backend services
-api_service=api
-worker_service=worker
-
-# Frontend services
-frontend_service=frontend
-
 
 # ======================================================================================
 # Docker
@@ -43,72 +36,73 @@ shell: ##@Docker Shells into a Docker Compose service
 # ======================================================================================
 .PHONY: build-backend
 build-backend: ##@Backend Builds the backend docker image
-	@$(MAKE) build service="$(api_service) $(worker_service)"
+	@$(MAKE) build service="django"
 
 .PHONY: start-backend
 start-backend: ##@Backend Starts the backend
-	@$(MAKE) start service="$(api_service)"
+	@$(MAKE) start service="django"
 
 .PHONY: stop-backend
 stop-backend: ##@Backend Stops the backend
-	@$(MAKE) stop service="$(api_service)"
+	@$(MAKE) stop service="django"
 
-.PHONY: debug-api
-debug-api: ##@Backend Runs the API in debug mode
-	@$(MAKE) debug service="$(api_service)"
+.PHONY: debug-django
+debug-django: ##@Backend Runs the Django API in debug mode
+	@$(MAKE) debug service="django"
 
-.PHONY: debug-worker
-debug-worker: ##@Backend Runs the Worker in debug mode
-	@$(MAKE) debug service="$(worker_service)"
+.PHONY: debug-celery
+debug-celery: ##@Backend Runs Celery in debug mode
+	@$(MAKE) debug service="celery"
 
 .PHONY: shell-backend
-shell-backend: ##@Backend Shells into the backend container
-	@$(MAKE) shell service="$(api_service)"
+shell-backend: ##@Backend Shells into the django container
+	@$(MAKE) shell service="django"
 
 .PHONY: ipython
 ipython: ##@Backend Starts an IPython shell
-	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py shell_plus"
+	@$(MAKE) docker-compose-run service="django" cmd="python manage.py shell_plus"
 
 .PHONY: poetry-lock
 poetry-lock: ##@Backend Creates lock file with updated python dependencies
-	@$(MAKE) docker-compose-run options="--no-deps $(options)" service="$(api_service)" cmd="poetry lock"
+	@$(MAKE) docker-compose-run options="--no-deps $(options)" service="django" cmd="poetry lock"
 
 .PHONY: show-urls
-show-urls: ##@Backend Shows the URLs available on the API
-	@$(MAKE) docker-compose-run options="--no-deps $(options)" service="$(api_service)" cmd="python manage.py show_urls"
+show-urls: ##@Backend Shows the URLs available on the Django API
+	@$(MAKE) docker-compose-run options="--no-deps $(options)" service="django" cmd="python manage.py show_urls"
 
 .PHONY: clear-cache
 clear-cache: ##@Backend Clears the cache
-	@$(MAKE) docker-compose-run options="--no-deps $(options)" service="$(api_service)" cmd="python manage.py clear_cache"
+	@$(MAKE) docker-compose-run options="--no-deps $(options)" service="django" cmd="python manage.py clear_cache"
 
 .PHONY: reset-database
 reset-database: ##@Backend Resets database to an empty state
-	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py reset_db -c --noinput"
+	@$(MAKE) docker-compose-run service="django" cmd="python manage.py reset_db -c --noinput"
 
 .PHONY: create-migrations
 create-migrations: ##@Backend Creates DB migrations
-	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py makemigrations"
+	@$(MAKE) docker-compose-run service="django" cmd="python manage.py makemigrations"
 
 .PHONY: apply-migrations
 apply-migrations: ##@Backend Applies migrations to the database
-	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py migrate"
+	@$(MAKE) docker-compose-run service="django" cmd="python manage.py migrate"
+	@$(MAKE) docker-compose-run service="openfga" cmd="migrate"
 
 .PHONY: seed-database
 seed-database: ##@Backend Seeds data into the database
-	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py seed_db"
+	@$(MAKE) docker-compose-run service="django" cmd="python manage.py seed_database"
 
 .PHONY: manage
 manage: ##@Backend Runs a Django manage command
-	@$(MAKE) docker-compose-run service="$(api_service)" cmd="python manage.py $(cmd)"
+	@$(MAKE) docker-compose-run service="django" cmd="python manage.py $(cmd)"
 
 .PHONY: ruff
 ruff: ##@Backend Runs Ruff linter with automatic fixes
-	@$(MAKE) docker-compose-run options="--no-deps" service="$(api_service)" cmd="ruff format ./ --no-cache --respect-gitignore"
-	@$(MAKE) docker-compose-run options="--no-deps" service="$(api_service)" cmd="ruff check ./ --no-cache --respect-gitignore --fix"
+	@$(MAKE) docker-compose-run options="--no-deps" service="django" cmd="ruff format ./ --no-cache --respect-gitignore"
+	@$(MAKE) docker-compose-run options="--no-deps" service="django" cmd="ruff check ./ --no-cache --respect-gitignore --fix"
 
 .PHONY: mypy
 mypy: ##@Backend Runs MyPy static type checker
-	@$(MAKE) docker-compose-run options="--no-deps" service="$(api_service)" cmd="mypy -p app --pretty --install-types --non-interactive"
+	@$(MAKE) docker-compose-run options="--no-deps" service="django" cmd="mypy ./ --pretty --install-types --non-interactive"
 
 .PHONY: setup-database
 setup-database: ##@Backend Resets database, runs migrations and add test data
@@ -132,39 +126,39 @@ lint-backend: ##@Backend Runs linters and type checking: Ruff, MyPy
 # ======================================================================================
 .PHONY: build-frontend
 build-frontend: ##@Frontend Builds the frontend docker image
-	@$(MAKE) build service="$(frontend_service)"
+	@$(MAKE) build service="frontend"
 
 .PHONY: start-frontend
 start-frontend: ##@Frontend Starts the frontend
-	@$(MAKE) start service="$(frontend_service)"
+	@$(MAKE) start service="frontend"
 
 .PHONY: stop-frontend
 stop-frontend: ##@Frontend Stops the frontend
-	@$(MAKE) stop service="$(frontend_service)"
+	@$(MAKE) stop service="frontend"
 
 .PHONY: debug-frontend
 debug-frontend: ##@Frontend Runs the Frontend in debug mode
-	@$(MAKE) debug service="$(frontend_service)"
+	@$(MAKE) debug service="frontend"
 
 .PHONY: shell-frontend
 shell-frontend: ##@Frontend Shells into the frontend container
-	@$(MAKE) shell service="$(frontend_service)"
+	@$(MAKE) shell service="frontend"
 
 .PHONY: node
 node: ##@Frontend Starts a Node shell
-	@$(MAKE) docker-compose-run service="$(frontend_service)" cmd="node"
+	@$(MAKE) docker-compose-run service="frontend" cmd="node"
 
 .PHONY: tsc
 tsc: ##@Frontend Runs Typescript
-	@$(MAKE) docker-compose-run options="--no-deps" service="$(frontend_service)" cmd="pnpm run tsc"
+	@$(MAKE) docker-compose-run options="--no-deps" service="frontend" cmd="pnpm run tsc"
 
 .PHONY: eslint
 eslint: ##@Frontend Runs ESLint
-	@$(MAKE) docker-compose-run options="--no-deps" service="$(frontend_service)" cmd="pnpm run eslint"
+	@$(MAKE) docker-compose-run options="--no-deps" service="frontend" cmd="pnpm run eslint"
 
 .PHONY: prettier
 prettier: ##@Frontend Runs Prettier
-	@$(MAKE) docker-compose-run options="--no-deps" service="$(frontend_service)" cmd="pnpm run prettier"
+	@$(MAKE) docker-compose-run options="--no-deps" service="frontend" cmd="pnpm run prettier"
 
 .PHONY: setup-frontend
 setup-frontend: ##@Frontend Sets up the entire frontend from scratch

@@ -39,7 +39,7 @@ USER app
 COPY --chown=app:app ./pyproject.toml ./poetry.lock* /app/
 
 # Python dependencies
-RUN if [ "$ENVIRONMENT" = "dev" ] || [ "$ENVIRONMENT" = "test" ]  || [ "$ENVIRONMENT" = "ci" ] ; \
+RUN if [ "$ENVIRONMENT" = "development" ] || [ "$ENVIRONMENT" = "test" ] || [ "$ENVIRONMENT" = "ci" ] ; \
     then poetry install --no-ansi --no-cache --no-interaction --no-root --only main,dev ; \
     else poetry install --no-ansi --no-cache --no-interaction --no-root --only main ; fi
 

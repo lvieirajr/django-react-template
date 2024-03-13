@@ -3,25 +3,26 @@
 # ======
 [tool.poetry]
 name = "DjangoReactTemplate"
-description = "DjangoReactTemplate"
+description = "Django React Template"
 version = "1.0.0"
 authors = ["Luis Vieira <lvieira@lvieira.com>"]
 
 [tool.poetry.dependencies]
 python = "~3.12.0"
 celery = {version = "^5.3.6", extras = ["gevent", "redis"]}
-django = {version = "^5.0.2"}
+django = {version = "^5.0.3"}
 django-cors-headers = {version = "^4.3.1"}
+django-environ = {version = "^0.11.2"}
 django-extensions = {version = "^3.2.3"}
+django-permissions-policy = {version = "^4.19.0"}
 django-redis = {version = "^5.4.0", extras=["hiredis"]}
+django-structlog = {version = "^7.1.0", extras=["celery", "commands"]}
 djangorestframework = {version = "^3.14.0"}
 ipython = {version = "^8.22.1"}
-gevent = {version = "^24.2.1"}
 psycopg = {version = "^3.1.18", extras = ["c", "pool"]}
-python-dotenv = {version = "1.0.1"}
-redis = {version = "^5.0.1", extras = ["hiredis"]}
-structlog = {version = "^24.1.0"}
+sentry-sdk = {version = "^1.41.0", extras = ["celery", "django"]}
 uwsgi = {version = "^2.0.24"}
+whitenoise = {version = "6.6.0", extras = ["brotli"]}
 
 [tool.poetry.dev-dependencies]
 django-stubs = {version = "^4.2", extras = ["compatible-mypy"]}
@@ -34,7 +35,7 @@ pytest = {version = "^8.0"}
 pytest-cov = {version = "^4.1"}
 pytest-django = {version = "^4.8"}
 pytest-mock = {version = "^3.12"}
-ruff = {version = "^0.2"}
+ruff = {version = "^0.3"}
 safety = {version = "^3.0"}
 watchdog = {version = "^4.0"}
 
@@ -57,7 +58,7 @@ plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
 strict = true
 
 [tool.django-stubs]
-django_settings_module = "app.settings"
+django_settings_module = "django_react_template.settings"
 
 
 # ====
@@ -65,5 +66,5 @@ django_settings_module = "app.settings"
 # ====
 [tool.ruff]
 target-version = "py312"
-ignore = ["COM812", "ISC001"]
-select = ["B", "C4", "C90", "COM", "E", "EXE", "F", "I", "ISC", "N", "S", "T10", "T20", "W"]
+lint.ignore = ["COM812", "ISC001"]
+lint.select = ["B", "C4", "C90", "COM", "E", "EXE", "F", "I", "ISC", "N", "S", "T10", "T20", "W"]

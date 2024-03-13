@@ -18,6 +18,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@tanstack/react-query": "^5.25.0",
     "axios": "^1.6.7",
+    "axios-case-converter": "^1.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.350.0",
@@ -68,7 +69,7 @@
   "eslintConfig": {
     "env": {
       "browser": true,
-      "es2021": true,
+      "es2024": true,
       "node": true
     },
     "extends": [

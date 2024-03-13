@@ -97,12 +97,12 @@ manage: ##@Backend Runs a Django manage command
 
 .PHONY: ruff
 ruff: ##@Backend Runs Ruff linter with automatic fixes
-	@$(MAKE) docker-compose-run options="--no-deps" service="django" cmd="ruff format ./ --no-cache --respect-gitignore"
-	@$(MAKE) docker-compose-run options="--no-deps" service="django" cmd="ruff check ./ --no-cache --respect-gitignore --fix"
+	@$(MAKE) docker-compose-run options="--no-deps" service="django" cmd="ruff format ./"
+	@$(MAKE) docker-compose-run options="--no-deps" service="django" cmd="ruff check ./ --fix"
 
 .PHONY: mypy
 mypy: ##@Backend Runs MyPy static type checker
-	@$(MAKE) docker-compose-run options="--no-deps" service="django" cmd="mypy ./ --pretty --install-types --non-interactive"
+	@$(MAKE) docker-compose-run options="--no-deps" service="django" cmd="mypy ./ --pretty --non-interactive"
 
 .PHONY: setup-database
 setup-database: ##@Backend Resets database, runs migrations and add test data

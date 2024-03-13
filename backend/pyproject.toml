@@ -32,7 +32,6 @@ ipdb = {version = "^0.13"}
 mock = {version = "^5.1"}
 mypy = {version = "^1.7"}
 pytest = {version = "^8.0"}
-pytest-cov = {version = "^4.1"}
 pytest-django = {version = "^4.8"}
 pytest-mock = {version = "^3.12"}
 ruff = {version = "^0.3"}
@@ -44,7 +43,13 @@ watchdog = {version = "^4.0"}
 # PyTest
 # ======
 [tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "django_react_template.settings"
 addopts = "-s -vv"
+markers = [
+    "unit: unit tests",
+    "integration: integration tests",
+    "e2e: end-to-end tests",
+]
 mock_use_standalone_module = true
 
 
@@ -52,6 +57,7 @@ mock_use_standalone_module = true
 # MyPy
 # ====
 [tool.mypy]
+exclude = [".*tests/*"]
 ignore_missing_imports = true
 namespace_packages = true
 plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
@@ -66,5 +72,12 @@ django_settings_module = "django_react_template.settings"
 # ====
 [tool.ruff]
 target-version = "py312"
-lint.ignore = ["COM812", "ISC001"]
-lint.select = ["B", "C4", "C90", "COM", "E", "EXE", "F", "I", "ISC", "N", "S", "T10", "T20", "W"]
+respect-gitignore = true
+
+[tool.ruff.lint]
+ignore = ["COM812", "ISC001"]
+select = ["B", "C4", "C90", "COM", "E", "EXE", "F", "I", "ISC", "N", "S", "T10", "T20", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F401"]
+"**/tests/*" = ["S101"]

@@ -6,3 +6,7 @@ export interface CustomerFields {
 
 export interface MinimalCustomer extends MinimalAPIModel, CustomerFields {}
 export interface Customer extends APIModel, CustomerFields {}
+
+export interface CreateCustomerRequest {
+  name: string;
+}

@@ -1,17 +1,25 @@
 import { AxiosInstance } from "axios";
 import urlJoin from "url-join";
 
-import { APIModelID, Customer, PaginatedResponse } from "@/api/types";
+import {
+  APIModelID,
+  CreateCustomerRequest,
+  Customer,
+  PaginatedResponse,
+} from "@/api/types";
 
 export function customerApiClient(axiosInstance: AxiosInstance) {
-  const BASE_API_URL = "/customers";
+  const apiPath = "customers";
 
   return {
     list: async (): Promise<PaginatedResponse<Customer>> => {
-      return (await axiosInstance.get(BASE_API_URL)).data;
+      return (await axiosInstance.get(apiPath)).data;
+    },
+    create: async (data: CreateCustomerRequest): Promise<Customer> => {
+      return (await axiosInstance.post(apiPath, data)).data;
     },
     get: async (id: APIModelID): Promise<Customer> => {
-      return (await axiosInstance.get(urlJoin(BASE_API_URL, id))).data;
+      return (await axiosInstance.get(urlJoin(apiPath, id))).data;
     },
   };
 }

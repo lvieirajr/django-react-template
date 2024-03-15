@@ -74,4 +74,10 @@ Dockerfile
 
 # Docs
 README.md
+
+# Dependencies
+node_modules/
+
+# Build
+dist/
 ### END Others ###

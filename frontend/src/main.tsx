@@ -7,6 +7,7 @@ import { Auth0Provider } from "@/components/providers/auth0";
 import { ThemeProvider } from "@/components/providers/theme";
 import App from "@/app";
 
+import "@/lib/i18n";
 import "@/styles/globals.css";
 
 ReactDOM.createRoot(document.getElementById("app") as HTMLElement).render(

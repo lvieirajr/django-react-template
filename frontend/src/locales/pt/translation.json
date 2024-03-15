@@ -1,0 +1,14 @@
+{
+  "pages": {
+    "home": {
+      "title": "Início",
+      "welcomeMessage": "Bem-vindo ao Django React Template"
+    },
+    "notFound": {
+      "title": "404 - Página Não Encontrada",
+      "status": "404",
+      "header": "Página Não Encontrada",
+      "description": "A página que você está procurando não existe."
+    }
+  }
+}

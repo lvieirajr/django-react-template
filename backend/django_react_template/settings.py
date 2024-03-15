@@ -60,6 +60,8 @@ SECURE_REFERRER_POLICY = "same-origin"
 
 X_FRAME_OPTIONS = "DENY"
 
+CORS_ALLOWED_ORIGINS = environment.list("ALLOWED_ORIGINS")
+
 PERMISSIONS_POLICY = {
     "accelerometer": [],
     "autoplay": [],
@@ -94,6 +96,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "core",
     "django_react_template",
+    "health_check",
+    "health_check.db",
+    "health_check.cache",
+    "health_check.storage",
+    "health_check.contrib.migrations",
+    "health_check.contrib.redis",
 ]
 
 
@@ -105,6 +113,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django_permissions_policy.PermissionsPolicyMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -166,15 +175,17 @@ DATABASES = {
 # ======================================================================================
 # Caches
 # ======================================================================================
-if environment.str("REDIS_URL"):
+REDIS_URL = environment.str("REDIS_URL")
+
+if REDIS_URL:
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": environment.str("REDIS_URL"),
+            "LOCATION": REDIS_URL,
             "TIMEOUT": 1,
             "OPTIONS": {
                 "IGNORE_EXCEPTIONS": True,
-                "PARSER_CLASS": "redis.connection.HiredisParser",
+                "PARSER_CLASS": "redis.connection._HiredisParser",
                 "REDIS_CLIENT_KWARGS": {
                     "health_check_interval": 60,
                     "socket_keepalive": True,
@@ -271,7 +282,7 @@ configure_structlog()
 # ======================================================================================
 # Celery
 # ======================================================================================
-CELERY_BROKER_URL = environment.str("REDIS_URL")
+CELERY_BROKER_URL = REDIS_URL
 CELERY_BROKER_CONNECTION_MAX_RETRIES = 3
 CELERY_BROKER_TRANSPORT_OPTIONS = {"max_retries": 3}
 

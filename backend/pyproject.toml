@@ -14,6 +14,7 @@ django = {version = "^5.0.3"}
 django-cors-headers = {version = "^4.3.1"}
 django-environ = {version = "^0.11.2"}
 django-extensions = {version = "^3.2.3"}
+django-health-check = {version = "^3.18.1"}
 django-permissions-policy = {version = "^4.19.0"}
 django-redis = {version = "^5.4.0", extras=["hiredis"]}
 django-structlog = {version = "^7.1.0", extras=["celery", "commands"]}

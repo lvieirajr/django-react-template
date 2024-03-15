@@ -14,7 +14,7 @@ export function LogoutPage(): ReactElement {
       });
     }
 
-    performLogout();
+    performLogout().then();
   }, [logout]);
 
   return <></>;

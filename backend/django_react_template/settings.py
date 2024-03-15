@@ -61,6 +61,7 @@ SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = "DENY"
 
 CORS_ALLOWED_ORIGINS = environment.list("ALLOWED_ORIGINS")
+CORS_ALLOW_CREDENTIALS = True
 
 PERMISSIONS_POLICY = {
     "accelerometer": [],

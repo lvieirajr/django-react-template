@@ -32,8 +32,8 @@ x-frontend-defaults: &frontend-defaults
     - ./frontend/.env
   volumes:
     - ./frontend/:/app/:rw,cached
-    - dist:/app/dist/:rw,cached
-    - node_modules:/app/node_modules/:rw,cached
+    - /app/dist/
+    - /app/node_modules/
 
 
 # Services
@@ -121,7 +121,5 @@ services:
 
 # Volumes
 volumes:
-  dist:
-  node_modules:
   postgres:
   redis:

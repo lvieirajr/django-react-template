@@ -130,7 +130,7 @@ build-frontend: ##@Frontend Builds the frontend docker image
 
 .PHONY: start-frontend
 start-frontend: ##@Frontend Starts the frontend
-	@$(MAKE) start service="frontend"
+	@$(MAKE) start service="frontend" options="--renew-anon-volumes"
 
 .PHONY: stop-frontend
 stop-frontend: ##@Frontend Stops the frontend

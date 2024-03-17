@@ -3,22 +3,22 @@ import urlJoin from "url-join";
 
 import {
   APIModelID,
-  CreateCustomerRequest,
-  Customer,
+  CreateOrganizationRequest,
+  Organization,
   PaginatedResponse,
 } from "@/api/types";
 
-export function customerApiClient(axiosInstance: AxiosInstance) {
-  const apiPath = "customers";
+export function organizationApiClient(axiosInstance: AxiosInstance) {
+  const apiPath = "Organizations";
 
   return {
-    list: async (): Promise<PaginatedResponse<Customer>> => {
+    list: async (): Promise<PaginatedResponse<Organization>> => {
       return (await axiosInstance.get(apiPath)).data;
     },
-    create: async (data: CreateCustomerRequest): Promise<Customer> => {
+    create: async (data: CreateOrganizationRequest): Promise<Organization> => {
       return (await axiosInstance.post(apiPath, data)).data;
     },
-    get: async (id: APIModelID): Promise<Customer> => {
+    get: async (id: APIModelID): Promise<Organization> => {
       return (await axiosInstance.get(urlJoin(apiPath, id))).data;
     },
   };

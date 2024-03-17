@@ -1,14 +1,30 @@
 {
   "pages": {
     "home": {
-      "title": "Home",
-      "welcomeMessage": "Welcome to Django React Template"
+      "title": "Home"
+    },
+    "profile": {
+      "title": "Profile"
     },
     "notFound": {
       "title": "404 - Page Not Found",
       "status": "404",
       "header": "Page Not Found",
       "description": "The page you are looking for does not exist."
+    }
+  },
+  "navigation": {
+    "userMenu": {
+      "theme": {
+        "title": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "language": {
+        "title": "Language"
+      },
+      "logout": "Log out"
     }
   }
 }

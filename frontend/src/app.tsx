@@ -8,12 +8,14 @@ import { UnauthenticatedLayout } from "@/components/layouts/unauthenticated";
 import { HomePage } from "@/components/pages/home";
 import { LogoutPage } from "@/components/pages/logout";
 import { NotFoundPage } from "@/components/pages/not-found";
+import { ProfilePage } from "@/components/pages/profile";
 
 export default function App(): JSX.Element {
   return (
     <Routes>
       <Route element={<AuthenticatedLayout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Route>
 
       <Route element={<UnauthenticatedLayout />}></Route>

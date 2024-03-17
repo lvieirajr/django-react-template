@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
 
-export function HomePage(): ReactElement {
+export function ProfilePage(): ReactElement {
   return <></>;
 }

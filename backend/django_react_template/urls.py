@@ -1,6 +1,7 @@
 from django.urls import include, path
 from django.views.generic.base import TemplateView
 
+
 urlpatterns = [
     path(
         "robots.txt",

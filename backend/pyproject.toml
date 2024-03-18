@@ -18,10 +18,11 @@ django-health-check = {version = "^3.18.1"}
 django-permissions-policy = {version = "^4.19.0"}
 django-redis = {version = "^5.4.0", extras=["hiredis"]}
 django-structlog = {version = "^7.1.0", extras=["celery", "commands"]}
-djangorestframework = {version = "^3.14.0"}
-ipython = {version = "^8.22.1"}
+djangorestframework = {version = "^3.15.0"}
+djangorestframework-simplejwt = {version = "^5.3.1", extras=["crypto"]}
+ipython = {version = "^8.22.2"}
 psycopg = {version = "^3.1.18", extras = ["c", "pool"]}
-sentry-sdk = {version = "^1.41.0", extras = ["celery", "django"]}
+sentry-sdk = {version = "^1.42.0", extras = ["celery", "django"]}
 uwsgi = {version = "^2.0.24"}
 whitenoise = {version = "6.6.0", extras = ["brotli"]}
 
@@ -32,7 +33,7 @@ factory-boy = {version = "^3.3"}
 ipdb = {version = "^0.13"}
 mock = {version = "^5.1"}
 mypy = {version = "^1.7"}
-pytest = {version = "^8.0"}
+pytest = {version = "^8.1"}
 pytest-django = {version = "^4.8"}
 pytest-mock = {version = "^3.12"}
 ruff = {version = "^0.3"}

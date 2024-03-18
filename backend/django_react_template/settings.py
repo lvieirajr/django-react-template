@@ -1,8 +1,10 @@
 from pathlib import Path
+from urllib.parse import urljoin
 
 import environ
 import sentry_sdk
 import structlog
+from corsheaders.defaults import default_headers, default_methods
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -62,6 +64,8 @@ X_FRAME_OPTIONS = "DENY"
 
 CORS_ALLOWED_ORIGINS = environment.list("ALLOWED_ORIGINS")
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = default_headers
+CORS_ALLOW_METHODS = default_methods
 
 PERMISSIONS_POLICY = {
     "accelerometer": [],
@@ -103,6 +107,7 @@ INSTALLED_APPS = [
     "health_check.storage",
     "health_check.contrib.migrations",
     "health_check.contrib.redis",
+    "rest_framework_simplejwt",
 ]
 
 
@@ -280,6 +285,17 @@ def configure_structlog():
 
 configure_structlog()
 
+
+# ======================================================================================
+# Django Rest Framework
+# ======================================================================================
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication",
+    )
+}
+
+
 # ======================================================================================
 # Celery
 # ======================================================================================
@@ -320,8 +336,24 @@ if environment.str("SENTRY_DSN"):
         ],
     )
 
+# ======================================================================================
+# Authentication (Auth0)
+# ======================================================================================
+AUTH0_DOMAIN = environment.str("AUTH0_DOMAIN")
+AUTH0_AUDIENCE = environment.str("AUTH0_AUDIENCE")
+
+SIMPLE_JWT = {
+    "ALGORITHM": "RS256",
+    "JWK_URL": urljoin(AUTH0_DOMAIN, "/.well-known/jwks.json"),
+    "AUDIENCE": AUTH0_AUDIENCE,
+    "ISSUER": AUTH0_DOMAIN,
+    "USER_ID_CLAIM": "sub",
+    "AUTH_TOKEN_CLASSES": ["django_react_template.authentication.AccessToken"],
+    "TOKEN_USER_CLASS": "django_react_template.authentication.TokenUser",
+}
+
 
 # ======================================================================================
-# Stripe
+# Payments (Stripe)
 # ======================================================================================
 STRIPE_SECRET_KEY = environment.str("STRIPE_SECRET_KEY")

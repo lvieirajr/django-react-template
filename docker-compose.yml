@@ -83,6 +83,7 @@ services:
       - OPENFGA_DATASTORE_ENGINE=postgres
       - OPENFGA_DATASTORE_URI=postgres://postgres:postgres@postgres:5432/postgres
       - OPENFGA_LOG_FORMAT=json
+      - OPENFGA_AUTHN_PRESHARED_KEYS="OPENFGA_SECRET_KEY"
     ports:
       - "8080:8080"
       - "3000:3000"

@@ -1,1 +1,1 @@
-from .customer import Customer
+from .organization import Organization

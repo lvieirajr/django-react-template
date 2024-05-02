@@ -33,6 +33,7 @@ factory-boy = {version = "^3.3"}
 ipdb = {version = "^0.13"}
 mock = {version = "^5.1"}
 mypy = {version = "^1.7"}
+openfga_sdk = {version = "^0.4.1"}
 pytest = {version = "^8.1"}
 pytest-django = {version = "^4.8"}
 pytest-mock = {version = "^3.12"}

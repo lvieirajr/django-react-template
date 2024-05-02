@@ -3,23 +3,23 @@ from django.db import models
 from django_react_template.models import BaseModel, BaseModelManager, BaseModelQuerySet
 
 
-class CustomerQuerySet(BaseModelQuerySet):
+class OrganizationQuerySet(BaseModelQuerySet):
     pass
 
 
-class CustomerManager(BaseModelManager.from_queryset(CustomerQuerySet)):
+class OrganizationManager(BaseModelManager.from_queryset(OrganizationQuerySet)):
     pass
 
 
-class Customer(BaseModel):
+class Organization(BaseModel):
     name = models.TextField(null=False, db_index=True, unique=True)
 
     auth0_id = models.TextField(null=False, db_index=True, unique=True)
     stripe_id = models.TextField(null=False, db_index=True, unique=True)
 
-    objects = CustomerManager()
+    objects = OrganizationManager()
 
     class Meta:
-        db_table = "customer"
-        verbose_name = "Customer"
-        verbose_name_plural = "Customers"
+        db_table = "organization"
+        verbose_name = "Organization"
+        verbose_name_plural = "Organizations"

@@ -88,7 +88,8 @@
       "plugin:import/typescript",
       "plugin:jsx-a11y/recommended",
       "plugin:react/recommended",
-      "plugin:react-hooks/recommended"
+      "plugin:react-hooks/recommended",
+      "prettier"
     ],
     "plugins": [
       "import",
